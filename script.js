@@ -16,12 +16,14 @@ function liveCalculate() {
     }
 
     const result = (a * (b / 100) + 5000 + b) / (c/100);
-
+    const benefit = (a * (b / 100));
+    const formattedBenefit = benefit.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
     // Выводим результат красиво
     output.style.color = "#007bff";
     output.innerText = result.toLocaleString('ru-RU', {
         maximumFractionDigits: 2
     });
+    foyda.innerText = formattedBenefit;
 }
 
 // Вешаем событие 'input' на каждое поле
