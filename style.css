@@ -1,0 +1,57 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.calculator-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 350px;
+}
+
+h2 { margin-top: 0; color: #333; text-align: center; }
+.formula { font-size: 0.9rem; color: #666; text-align: center; margin-bottom: 1.5rem; }
+
+.input-group { margin-bottom: 1rem; }
+label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover { background-color: #0056b3; }
+
+.result-box {
+    margin-top: 1.5rem;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+#output { color: #007bff; }

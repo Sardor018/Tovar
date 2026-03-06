@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор формулы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator-card">
+        <h2>Живой расчет</h2>
+        <p class="formula">$(A \cdot (B / 100) + 5000 + B) / C$</p>
+        
+        <div class="input-group">
+            <label>Sof Foyda</label>
+            <input type="number" id="valA" value="0">
+        </div>
+    
+        <div class="input-group">
+            <label>O'zini Narxi</label>
+            <input type="number" id="valB" value="0">
+        </div>
+    
+        <div class="input-group">
+            <label>Komissiya</label>
+            <input type="number" id="valC" value="1">
+        </div>
+    
+        <div class="result-box">
+            <span>Результат:</span>
+            <strong id="output">5000</strong>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
