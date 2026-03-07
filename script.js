@@ -2,6 +2,63 @@ const inputs = document.querySelectorAll('input');
 const output = document.getElementById('output');
 const foyda = document.getElementById('foyda');
 
+
+const API_BASE_URL = "https://data-bekend.onrender.com"; 
+
+// === ЛОГИКА ПРОБУЖДЕНИЯ СЕРВЕРА ===
+async function autoWakeServer() {
+    const statusText = document.getElementById('serverStatus');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    let seconds = 0;
+    let isAwake = false;
+
+    // Таймер только для красоты (считает секунды на экране)
+    const timer = setInterval(() => {
+        seconds++;
+        if (!isAwake) {
+            statusText.innerText = `🟡 Сервер просыпается... Прошло: ${seconds} сек.`;
+        }
+    }, 1000);
+
+    // Пытаемся достучаться до сервера в цикле
+    while (!isAwake) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/ping`);
+            
+            if (response.ok) {
+                isAwake = true; // Выходим из цикла
+                clearInterval(timer); // Останавливаем счетчик
+
+                // Настраиваем UI
+                statusText.innerText = `🟢 Сервер готов! (за ${seconds} сек.)`;
+                statusText.style.color = "#28a745";
+                
+                analyzeBtn.disabled = false;
+                analyzeBtn.style.background = "#7000ff";
+                analyzeBtn.innerText = "Получить данные";
+                
+                console.log("Сервер проснулся успешно!");
+
+                setTimeout(() => {
+                    statusText.style.display = 'none';
+                }, 3000);
+            }
+        } catch (error) {
+            // Если сервер еще не ответил (ошибка сети), ждем 2 секунды и пробуем снова
+            console.log("Сервер еще спит, ждем...");
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        
+        // Если прошло больше 2 минут, а сервер не ответил - прекращаем мучить браузер
+        if (seconds > 120) {
+            clearInterval(timer);
+            statusText.innerText = '🔴 Не удалось разбудить сервер за 2 минуты.';
+            break;
+        }
+    }
+}
+autoWakeServer();
+
 // === ЛОГИКА КАЛЬКУЛЯТОРА ===
 function liveCalculate() {
     const a = parseFloat(document.getElementById('valA').value) || 0;
