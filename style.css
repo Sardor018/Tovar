@@ -1,56 +1,68 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
+    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 20px;
 }
 
-.calculator-card {
+.container {
     background: white;
-    padding: 2rem;
+    padding: 30px;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 350px;
+    max-width: 500px;
+    box-sizing: border-box;
 }
 
-h2 { margin-top: 0; color: #333; text-align: center; }
-.foyda { font-size: 0.9rem; color: #666; text-align: center; margin-bottom: 1.5rem; }
-.input-group { margin-bottom: 1rem; }
-label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+h2 { text-align: center; color: #7000ff; margin-top: 0; margin-bottom: 20px; }
+.calc-title { text-align: center; color: #333; margin-bottom: 15px; }
+
+.form-group { margin-bottom: 15px; }
+label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
 
 input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+    width: 100%; 
+    padding: 12px;
+    border: 1px solid #ddd; 
     border-radius: 8px;
-    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+    box-sizing: border-box; 
+    font-size: 16px;
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
+    width: 100%; 
+    padding: 12px; 
+    margin-top: 10px;
+    background-color: #7000ff; 
     color: white;
-    border: none;
+    border: none; 
     border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
+    font-size: 16px; 
+    cursor: pointer; 
     transition: background 0.3s;
 }
+button:hover { background-color: #5500cc; }
 
-button:hover { background-color: #0056b3; }
-
-.result-box {
-    margin-top: 1.5rem;
+.info-box, .calc-box {
+    margin-top: 20px; 
     padding: 15px;
-    background-color: #e9ecef;
+    background: #f9f9f9; 
     border-radius: 8px;
-    text-align: center;
-    font-size: 1.2rem;
 }
+.info-box { border-left: 4px solid #7000ff; display: none; }
+.calc-box { border-left: 4px solid #28a745; text-align: center; }
 
-#output { color: #007bff; }
+.loader { text-align: center; display: none; margin-top: 15px; color: #666; }
+
+.result-text { font-size: 24px; font-weight: bold; margin: 5px 0; }
+.text-blue { color: #007bff; }
+.text-green { color: #28a745; }
+
+.divider { margin: 25px 0; border: 0; border-top: 1px solid #eee; }
+.margin-top-15 { margin-top: 15px; }

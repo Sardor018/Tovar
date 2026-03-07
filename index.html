@@ -3,35 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор формулы</title>
+    <title>Uzum: Анализ и Калькулятор</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="calculator-card">
-        <h2>Живой расчет</h2>
-        <p class=foyda id="foyda">0</p>
-        
-        <div class="input-group">
-            <label>Sof Foyda</label>
-            <input type="number" id="valA" value="0">
-        </div>
+
+<div class="container">
+    <h2>Uzum Анализатор</h2>
     
-        <div class="input-group">
-            <label>O'zini Narxi</label>
-            <input type="number" id="valB" value="0">
-        </div>
+    <div class="form-group">
+        <label>Ссылка на товар Uzum:</label>
+        <input type="text" id="uzumUrl" placeholder="https://uzum.uz/...">
+        <button onclick="analyzeProduct()">Получить данные</button>
+    </div>
     
-        <div class="input-group">
-            <label>Komissiya</label>
-            <input type="number" id="valC" value="1">
-        </div>
+    <div class="loader" id="loader">⏳ Собираю данные с сайта и таблицы...</div>
     
-        <div class="result-box">
-            <span>Результат:</span>
-            <strong id="output">5000</strong>
-        </div>
+    <div class="info-box" id="infoBox">
+        <p><strong>Категория:</strong> <span id="resCategory">-</span></p>
+        <p><strong>Цена конкурента:</strong> <span id="resCompetitorPrice">-</span> сум</p>
+        <p><strong>Комиссия FBO:</strong> <span id="resFbo">-</span></p>
     </div>
 
-    <script src="script.js"></script>
+    <hr class="divider">
+
+    <h3 class="calc-title">Калькулятор прибыли</h3>
+    
+    <div class="form-group">
+        <label>Желаемая прибыль % (a):</label>
+        <input type="number" id="valA" value="20">
+    </div>
+    
+    <div class="form-group">
+        <label>Себестоимость товара (b):</label>
+        <input type="number" id="valB" placeholder="Например, 15000">
+    </div>
+    
+    <div class="form-group">
+        <label>Комиссия Uzum % (c):</label>
+        <input type="number" id="valC" value="15">
+    </div>
+
+    <div class="calc-box">
+        <p>Рекомендованная цена продажи:</p>
+        <p class="result-text text-blue" id="output">0 сум</p>
+        
+        <p class="margin-top-15">Ваша чистая прибыль (Foyda):</p>
+        <p class="result-text text-green" id="foyda">0 сум</p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
 </body>
 </html>
