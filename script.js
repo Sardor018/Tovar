@@ -99,7 +99,7 @@ async function analyzeProduct() {
     document.getElementById('infoBox').style.display = 'none';
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/get-category', {
+        const response = await fetch(`${API_BASE_URL}/api/get-category`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: urlInput })
