@@ -1,137 +1,91 @@
-const inputs = document.querySelectorAll('input');
-const output = document.getElementById('output');
-const foyda = document.getElementById('foyda');
+const API_BASE_URL = "https://data-bekend.onrender.com"; //
 
+// --- Переключатель вкладок ---
+function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`section-${tab}`).classList.remove('hidden');
+    
+    // Смена стиля кнопок
+    const btnAn = document.getElementById('tab-btn-analyzer');
+    const btnGen = document.getElementById('tab-btn-generator');
+    
+    if(tab === 'analyzer') {
+        btnAn.className = "px-6 py-2 rounded-full font-bold shadow-md bg-purple-600 text-white transition";
+        btnGen.className = "px-6 py-2 rounded-full font-bold shadow-md bg-white text-gray-700 transition";
+    } else {
+        btnGen.className = "px-6 py-2 rounded-full font-bold shadow-md bg-pink-500 text-white transition";
+        btnAn.className = "px-6 py-2 rounded-full font-bold shadow-md bg-white text-gray-700 transition";
+    }
+}
 
-const API_BASE_URL = "https://data-bekend.onrender.com"; 
-
-// === ЛОГИКА ПРОБУЖДЕНИЯ СЕРВЕРА ===
+// --- Модуль: Анализатор ---
 async function autoWakeServer() {
     const statusText = document.getElementById('serverStatus');
     const analyzeBtn = document.getElementById('analyzeBtn');
-    let seconds = 0;
-    let isAwake = false;
-
-    // Таймер только для красоты (считает секунды на экране)
-    const timer = setInterval(() => {
-        seconds++;
-        if (!isAwake) {
-            statusText.innerText = `🟡 Сервер просыпается... Прошло: ${seconds} сек.`;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/ping`);
+        if (response.ok) {
+            statusText.innerText = `🟢 Сервер готов!`;
+            statusText.style.color = "#28a745";
+            analyzeBtn.classList.remove('bg-gray-400');
+            analyzeBtn.classList.add('bg-purple-600');
+            setTimeout(() => statusText.style.display = 'none', 3000);
         }
-    }, 1000);
-
-    // Пытаемся достучаться до сервера в цикле
-    while (!isAwake) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/ping`);
-            
-            if (response.ok) {
-                isAwake = true; // Выходим из цикла
-                clearInterval(timer); // Останавливаем счетчик
-
-                // Настраиваем UI
-                statusText.innerText = `🟢 Сервер готов! (за ${seconds} сек.)`;
-                statusText.style.color = "#28a745";
-                
-                analyzeBtn.disabled = false;
-                analyzeBtn.style.background = "#7000ff";
-                analyzeBtn.innerText = "Получить данные";
-                
-                console.log("Сервер проснулся успешно!");
-
-                setTimeout(() => {
-                    statusText.style.display = 'none';
-                }, 3000);
-            }
-        } catch (error) {
-            // Если сервер еще не ответил (ошибка сети), ждем 2 секунды и пробуем снова
-            console.log("Сервер еще спит, ждем...");
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-        
-        // Если прошло больше 2 минут, а сервер не ответил - прекращаем мучить браузер
-        if (seconds > 120) {
-            clearInterval(timer);
-            statusText.innerText = '🔴 Не удалось разбудить сервер за 2 минуты.';
-            break;
-        }
-    }
+    } catch (e) { setTimeout(autoWakeServer, 3000); }
 }
-autoWakeServer();
 
-// === ЛОГИКА КАЛЬКУЛЯТОРА ===
 function liveCalculate() {
     const a = parseFloat(document.getElementById('valA').value) || 0;
     const b = parseFloat(document.getElementById('valB').value) || 0;
     const c = parseFloat(document.getElementById('valC').value) || 0;
-
-    // Защита от деления на 0 при комиссии 100%
-    if (c >= 100) {
-        output.innerText = "Ошибка (Комиссия ≥ 100%)";
-        output.style.color = "red";
-        return;
-    }
-
+    
     let d = 1 - c / 100;
     const result = (a * (b / 100) + 5000 + b) / d;
     const benefit = (a * (b / 100) + 5000);
     
-    output.style.color = "#007bff";
-    output.innerText = result.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) + " сум";
-    foyda.innerText = benefit.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) + " сум";
+    document.getElementById('output').innerText = Math.round(result).toLocaleString('ru-RU') + " сум";
+    document.getElementById('foyda').innerText = Math.round(benefit).toLocaleString('ru-RU') + " сум";
 }
 
-inputs.forEach(input => {
-    input.addEventListener('input', liveCalculate);
-});
-liveCalculate();
-
-
-// === ЗАПРОС К БЭКЕНДУ НА FASTAPI ===
-async function analyzeProduct() {
-    const urlInput = document.getElementById('uzumUrl').value;
-    if (!urlInput.includes('uzum.uz')) {
-        alert('Пожалуйста, введите корректную ссылку на Uzum!');
-        return;
-    }
-
-    document.getElementById('loader').style.display = 'block';
-    document.getElementById('infoBox').style.display = 'none';
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/get-category`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: urlInput })
+// --- Модуль: Генератор ---
+async function startBulkGeneration() {
+    await document.fonts.ready;
+    const count = parseInt(document.getElementById('input-count').value) || 1;
+    const prefix = document.getElementById('input-prefix').value.trim();
+    const bot = document.getElementById('input-bot').value.trim();
+    const sumUz = document.getElementById('input-sum').value;
+    
+    const statusCont = document.getElementById('status-container');
+    statusCont.classList.remove('hidden');
+    
+    const zip = new JSZip();
+    const folderUz = zip.folder("Uzbek_Cards");
+    
+    for(let i=1; i<=count; i++) {
+        const code = prefix + "-" + Math.random().toString(36).substring(2,7).toUpperCase();
+        document.getElementById('render-code-uz').innerText = code;
+        document.getElementById('render-sum-uz').innerText = sumUz;
+        
+        // Генерация QR
+        new QRious({
+            element: document.getElementById('qr-canvas-uz'),
+            value: `https://t.me/${bot.replace('@','')}`,
+            size: 130
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-            document.getElementById('resCategory').innerText = data.final_category;
-            document.getElementById('resCompetitorPrice').innerText = data.price_without_card || 'Не найдена';
-            
-            if (data.commission && !data.commission.error) {
-                const fboPercentText = data.commission.FBO; 
-                document.getElementById('resFbo').innerText = fboPercentText;
-                
-                const cleanPercent = parseFloat(fboPercentText.replace('%', '').replace(',', '.'));
-                
-                if (!isNaN(cleanPercent)) {
-                    document.getElementById('valC').value = cleanPercent;
-                    liveCalculate(); 
-                }
-            } else {
-                document.getElementById('resFbo').innerText = 'Не найдено';
-            }
-            
-            document.getElementById('infoBox').style.display = 'block';
-        } else {
-            alert('Ошибка: ' + (data.detail || 'Неизвестная ошибка'));
-        }
-    } catch (error) {
-        alert('Ошибка сети! Убедитесь, что сервер FastAPI запущен.');
-    } finally {
-        document.getElementById('loader').style.display = 'none';
+        const canvas = await html2canvas(document.getElementById('export-template-uz'), { scale: 2 });
+        folderUz.file(`${i}_card_${code}.jpg`, canvas.toDataURL("image/jpeg", 0.9).split(',')[1], {base64: true});
+        
+        document.getElementById('progress-bar').style.width = (i/count*100) + "%";
     }
+    
+    const blob = await zip.generateAsync({type:"blob"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "Uzum_Cards.zip";
+    link.click();
 }
+
+// Инициализация
+document.querySelectorAll('input').forEach(inp => inp.addEventListener('input', liveCalculate));
+autoWakeServer();

@@ -1,69 +1,28 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
+/* Общие стили */
+.tab-content.hidden { display: none; }
+
+/* Анимация загрузки для Анализатора */
+#loader { color: #7000ff; font-weight: bold; }
+
+/* Стили шаблона карточки (1080x1440) */
+.export-template {
+    width: 1080px; height: 1440px;
+    background: white; position: relative;
+    padding: 60px; display: flex; flex-direction: column;
+    justify-content: space-between; overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 500px;
-    box-sizing: border-box;
+.export-decor-1 { position: absolute; top: -150px; left: -150px; width: 500px; height: 500px; background: rgba(236, 72, 153, 0.1); border-radius: 50%; }
+.export-decor-2 { position: absolute; bottom: -200px; right: -150px; width: 600px; height: 600px; background: rgba(236, 72, 153, 0.05); border-radius: 50%; }
+
+.step-row { display: flex; align-items: start; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 20px; margin-bottom: 10px; }
+.step-num { color: #ec4899; font-size: 32px; font-weight: 900; min-width: 60px; }
+.step-text { font-size: 21px; color: #374151; font-weight: 500; }
+
+.loader-spinner {
+    border: 4px solid #f3f3f3; border-top: 4px solid #ec4899;
+    border-radius: 50%; width: 24px; height: 24px;
+    animation: spin 1s linear infinite;
 }
-
-h2 { text-align: center; color: #7000ff; margin-top: 0; margin-bottom: 20px; }
-.calc-title { text-align: center; color: #333; margin-bottom: 15px; }
-
-.form-group { margin-bottom: 15px; }
-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
-
-input {
-    width: 100%; 
-    padding: 12px;
-    border: 1px solid #ddd; 
-    border-radius: 8px;
-    box-sizing: border-box; 
-    font-size: 16px;
-}
-
-button {
-    width: 100%; 
-    padding: 12px; 
-    margin-top: 10px;
-    background-color: #7000ff; 
-    color: white;
-    border: none; 
-    border-radius: 8px;
-    font-size: 16px; 
-    cursor: pointer; 
-    transition: background 0.3s;
-}
-button:hover { background-color: #5500cc; }
-
-.info-box, .calc-box {
-    margin-top: 20px; 
-    padding: 15px;
-    background: #f9f9f9; 
-    border-radius: 8px;
-}
-.info-box { border-left: 4px solid #7000ff; display: none; }
-.calc-box { border-left: 4px solid #28a745; text-align: center; }
-
-.loader { text-align: center; display: none; margin-top: 15px; color: #666; }
-
-
-.result-text { font-size: 24px; font-weight: bold; margin: 5px 0; }
-.text-blue { color: #007bff; }
-.text-green { color: #28a745; }
-
-.divider { margin: 25px 0; border: 0; border-top: 1px solid #eee; }
-.margin-top-15 { margin-top: 15px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

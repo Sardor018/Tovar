@@ -3,61 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uzum: Анализ и Калькулятор</title>
+    <title>Uzum Business Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen p-4">
 
-<div class="container">
-    <h2>Uzum Анализатор</h2>
-    
-    <div id="serverStatus" style="text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px; color: #ff9800;">
-        🟡 Подключение к серверу...
-    </div>
-    
-    <div class="form-group">
-        <label>Ссылка на товар Uzum:</label>
-        <input type="text" id="uzumUrl" placeholder="https://uzum.uz/...">
-        <button onclick="analyzeProduct()">Получить данные</button>
-    </div>
-    
-    <div class="loader" id="loader">⏳ Собираю данные с сайта и таблицы...</div>
-    
-    <div class="info-box" id="infoBox">
-        <p><strong>Категория:</strong> <span id="resCategory">-</span></p>
-        <p><strong>Цена конкурента:</strong> <span id="resCompetitorPrice">-</span> сум</p>
-        <p><strong>Комиссия FBO:</strong> <span id="resFbo">-</span></p>
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-center mb-6 space-x-2">
+            <button onclick="switchTab('analyzer')" id="tab-btn-analyzer" class="px-6 py-2 rounded-full font-bold shadow-md bg-purple-600 text-white transition">Анализатор</button>
+            <button onclick="switchTab('generator')" id="tab-btn-generator" class="px-6 py-2 rounded-full font-bold shadow-md bg-white text-gray-700 transition">Генератор карт</button>
+        </div>
+
+        <div id="section-analyzer" class="tab-content">
+            <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100">
+                <h2 class="text-2xl font-bold text-center text-purple-700 mb-4">Uzum Анализатор</h2>
+                <div id="serverStatus" class="text-center mb-4 text-sm font-bold text-orange-500">🟡 Подключение к серверу...</div>
+                
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-600 mb-1">Ссылка на товар Uzum:</label>
+                        <input type="text" id="uzumUrl" placeholder="https://uzum.uz/..." class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-purple-400">
+                    </div>
+                    <button onclick="analyzeProduct()" id="analyzeBtn" class="w-full bg-gray-400 text-white py-3 rounded-xl font-bold transition">Получить данные</button>
+                </div>
+
+                <div id="loader" class="hidden text-center my-4">⏳ Собираю данные...</div>
+
+                <div id="infoBox" class="hidden p-4 bg-purple-50 rounded-xl border-l-4 border-purple-600 mb-6">
+                    <p><strong>Категория:</strong> <span id="resCategory">-</span></p>
+                    <p><strong>Цена конкурента:</strong> <span id="resCompetitorPrice">-</span> сум</p>
+                    <p><strong>Комиссия FBO:</strong> <span id="resFbo">-</span></p>
+                </div>
+
+                <hr class="my-6">
+
+                <h3 class="text-xl font-bold text-center mb-4">Калькулятор прибыли</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div><label class="text-xs font-bold text-gray-500 uppercase">Прибыль %</label><input type="number" id="valA" value="20" class="w-full p-2 border rounded-lg"></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase">Себестоимость</label><input type="number" id="valB" placeholder="15000" class="w-full p-2 border rounded-lg"></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase">Комиссия Uzum %</label><input type="number" id="valC" value="15" class="w-full p-2 border rounded-lg"></div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-2xl text-center border border-gray-100">
+                    <p class="text-gray-500 text-sm">Рекомендованная цена:</p>
+                    <p id="output" class="text-3xl font-black text-blue-600">0 сум</p>
+                    <p class="text-gray-500 text-sm mt-4">Чистая прибыль (Foyda):</p>
+                    <p id="foyda" class="text-2xl font-bold text-green-600">0 сум</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-generator" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100">
+                <h2 class="text-2xl font-bold text-center text-pink-600 mb-6">Uzum Cashback Generator</h2>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-600 mb-1">Кол-во кодов</label>
+                        <input type="number" id="input-count" value="10" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-600 mb-1">Префикс</label>
+                        <input type="text" id="input-prefix" value="NT" class="w-full p-3 border rounded-xl uppercase">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-gray-600 mb-1">Сумма (UZB)</label>
+                    <input type="text" id="input-sum" value="20 000 SO'M" class="w-full p-3 border rounded-xl font-bold text-pink-600">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-600 mb-1">Telegram Бот (@)</label>
+                    <input type="text" id="input-bot" value="@NeuroTechUzBot" class="w-full p-3 border rounded-xl">
+                </div>
+                
+                <button onclick="startBulkGeneration()" id="btn-generate" class="w-full bg-pink-500 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-pink-600 transition active:scale-95">🚀 Создать карточки (ZIP)</button>
+
+                <div id="status-container" class="hidden mt-6 bg-pink-50 p-4 rounded-xl text-center">
+                    <div class="loader-spinner mx-auto mb-2"></div>
+                    <p id="status-text" class="text-pink-700 font-semibold text-sm">Генерация начата...</p>
+                    <div class="w-full bg-pink-100 h-2 rounded-full mt-2">
+                        <div id="progress-bar" class="bg-pink-500 h-2 rounded-full transition-all w-0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <hr class="divider">
-
-    <h3 class="calc-title">Калькулятор прибыли</h3>
-    
-    <div class="form-group">
-        <label>Желаемая прибыль % (a):</label>
-        <input type="number" id="valA" value="20">
-    </div>
-    
-    <div class="form-group">
-        <label>Себестоимость товара (b):</label>
-        <input type="number" id="valB" placeholder="Например, 15000">
-    </div>
-    
-    <div class="form-group">
-        <label>Комиссия Uzum % (c):</label>
-        <input type="number" id="valC" value="15">
+    <div style="position: absolute; left: -9999px; top: 0;">
+        <div id="export-template-uz" class="export-template">
+            <div class="export-decor-1"></div><div class="export-decor-2"></div>
+            <div class="content-z text-center">
+                <h1 class="text-[60px] font-black uppercase text-gray-800 leading-tight">TABRIKLAYMIZ!<br>SIZ</h1>
+                <div class="flex justify-center my-6">
+                    <div class="bg-[#ec4899] text-white px-12 py-6 rounded-[40px] text-[70px] font-black" id="render-sum-uz">20 000 SO'M</div>
+                </div>
+                <h1 class="text-[60px] font-black uppercase text-gray-800">YUTDINGIZ! 🎉</h1>
+            </div>
+            </div>
+        <div id="export-template-ru" class="export-template">
+             </div>
     </div>
 
-    <div class="calc-box">
-        <p>Рекомендованная цена продажи:</p>
-        <p class="result-text text-blue" id="output">0 сум</p>
-        
-        <p class="margin-top-15">Ваша чистая прибыль (Foyda):</p>
-        <p class="result-text text-green" id="foyda">0 сум</p>
-    </div>
-</div>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
