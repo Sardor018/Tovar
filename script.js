@@ -1,11 +1,15 @@
 const API_BASE_URL = "https://data-bekend.onrender.com"; //
 
 // --- Переключатель вкладок ---
+// Функция переключения между Анализатором и Генератором
 function switchTab(tab) {
+    // Скрываем все разделы с контентом
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    
+    // Показываем только выбранный раздел
     document.getElementById(`section-${tab}`).classList.remove('hidden');
     
-    // Смена стиля кнопок
+    // Обновляем визуальный стиль кнопок переключателя
     const btnAn = document.getElementById('tab-btn-analyzer');
     const btnGen = document.getElementById('tab-btn-generator');
     
