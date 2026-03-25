@@ -3,69 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uzum Business Tools</title>
+    <title>Uzum Business Tools: Анализатор и Генератор</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 min-h-screen p-4">
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 flex flex-col items-center">
 
-    <div class="max-w-4xl mx-auto">
-        <div class="flex justify-center mb-6 space-x-2">
-            <button onclick="switchTab('analyzer')" id="tab-btn-analyzer" class="px-6 py-2 rounded-full font-bold shadow-md bg-purple-600 text-white transition">Анализатор</button>
-            <button onclick="switchTab('generator')" id="tab-btn-generator" class="px-6 py-2 rounded-full font-bold shadow-md bg-white text-gray-700 transition">Генератор карт</button>
-        </div>
+    <div class="flex items-center justify-center gap-4 mb-8 bg-white p-2 rounded-full shadow-md w-full max-w-xl border border-gray-200">
+        <button onclick="switchTab('analyzer')" id="tab-btn-analyzer" class="w-1/2 px-6 py-3 rounded-full font-bold transition-all bg-purple-600 text-white shadow-lg">📊 Анализатор</button>
+        <button onclick="switchTab('generator')" id="tab-btn-generator" class="w-1/2 px-6 py-3 rounded-full font-bold transition-all text-gray-500 hover:bg-gray-100">⭐ Генератор Отзывов</button>
+    </div>
 
-        <div id="section-analyzer" class="tab-content">
-            <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100">
-                <h2 class="text-2xl font-bold text-center text-purple-700 mb-4">Uzum Анализатор</h2>
-                <div id="serverStatus" class="text-center mb-4 text-sm font-bold text-orange-500">🟡 Подключение к серверu...</div>
+    <div id="section-analyzer" class="tab-content w-full max-w-xl">
+        <div class="analyzer-container">
+            <h2>Uzum Анализатор</h2>
+            
+            <div id="serverStatus" style="text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px; color: #ff9800;">
+                🟡 Подключение к серверу...
+            </div>
+            
+            <div class="form-group">
+                <label>Ссылка на товар Uzum:</label>
+                <input type="text" id="uzumUrl" placeholder="https://uzum.uz/...">
+                <button id="analyzeBtn" onclick="analyzeProduct()">Получить данные</button>
+            </div>
+            
+            <div class="loader-text" id="loader">⏳ Собираю данные с сайта и таблицы...</div>
+            
+            <div class="info-box" id="infoBox">
+                <p><strong>Категория:</strong> <span id="resCategory">-</span></p>
+                <p><strong>Цена конкурента:</strong> <span id="resCompetitorPrice">-</span> сум</p>
+                <p><strong>Комиссия FBO:</strong> <span id="resFbo">-</span></p>
+            </div>
+
+            <hr class="divider">
+
+            <h3 class="calc-title">Калькулятор прибыли</h3>
+            
+            <div class="form-group">
+                <label>Желаемая прибыль % (a):</label>
+                <input type="number" id="valA" value="20">
+            </div>
+            
+            <div class="form-group">
+                <label>Себестоимость товара (b):</label>
+                <input type="number" id="valB" placeholder="Например, 15000">
+            </div>
+            
+            <div class="form-group">
+                <label>Комиссия Uzum % (c):</label>
+                <input type="number" id="valC" value="15">
+            </div>
+
+            <div class="calc-box">
+                <p>Рекомендованная цена продажи:</p>
+                <p class="result-text text-blue" id="output">0 сум</p>
                 
-                <div class="space-y-4 mb-6">
-                    <input type="text" id="uzumUrl" placeholder="https://uzum.uz/..." class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-purple-400">
-                    <button onclick="analyzeProduct()" id="analyzeBtn" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold transition">Получить данные</button>
-                </div>
-
-                <div id="infoBox" class="hidden p-4 bg-purple-50 rounded-xl border-l-4 border-purple-600 mb-6">
-                    <p><strong>Категория:</strong> <span id="resCategory">-</span></p>
-                    <p><strong>Цена конкурента:</strong> <span id="resCompetitorPrice">-</span> сум</p>
-                    <p><strong>Комиссия FBO:</strong> <span id="resFbo">-</span></p>
-                </div>
-
-                <hr class="my-6">
-                <h3 class="text-xl font-bold text-center mb-4">Калькулятор прибыли</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div><label class="text-xs font-bold text-gray-500 uppercase">Прибыль %</label><input type="number" id="valA" value="20" class="w-full p-2 border rounded-lg"></div>
-                    <div><label class="text-xs font-bold text-gray-500 uppercase">Себестоимость</label><input type="number" id="valB" placeholder="15000" class="w-full p-2 border rounded-lg"></div>
-                    <div><label class="text-xs font-bold text-gray-500 uppercase">Комиссия Uzum %</label><input type="number" id="valC" value="15" class="w-full p-2 border rounded-lg"></div>
-                </div>
-
-                <div class="bg-gray-50 p-6 rounded-2xl text-center border border-gray-100">
-                    <p id="output" class="text-3xl font-black text-blue-600">0 сум</p>
-                    <p id="foyda" class="text-2xl font-bold text-green-600 mt-2">0 сум</p>
-                </div>
+                <p class="margin-top-15">Ваша чистая прибыль (Foyda):</p>
+                <p class="result-text text-green" id="foyda">0 сум</p>
             </div>
         </div>
+    </div>
 
-        <div id="section-generator" class="tab-content hidden">
-            <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100">
-                <h2 class="text-2xl font-bold text-center text-pink-600 mb-6">Uzum Cashback Generator</h2>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <input type="number" id="input-count" value="10" class="p-3 border rounded-xl" placeholder="Soni">
-                    <input type="text" id="input-prefix" value="NT" class="p-3 border rounded-xl uppercase" placeholder="Prefix">
+    <div id="section-generator" class="tab-content hidden w-full max-w-xl">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="text-4xl">⭐</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Uzum Cashback Generator</h1>
+                    <p class="text-gray-500 text-sm">Идеальная центровка + QR коды + Список ключей</p>
                 </div>
-                <input type="text" id="input-sum" value="20 000 SO'M" class="w-full p-3 border rounded-xl mb-4 font-bold text-pink-600 text-center">
-                <input type="text" id="input-bot" value="@NeuroTechUzBot" class="w-full p-3 border rounded-xl mb-6 text-center">
-                
-                <button onclick="startBulkGeneration()" id="btn-generate" class="w-full bg-pink-500 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-pink-600 transition">🚀 Создать карточки (ZIP)</button>
+            </div>
 
-                <div id="status-container" class="hidden mt-6 bg-pink-50 p-4 rounded-xl text-center">
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Кол-во кодов</label>
+                        <input type="number" id="input-count" value="10" min="1" max="500" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:outline-none transition" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Префикс кода</label>
+                        <input type="text" id="input-prefix" value="NT" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:outline-none uppercase transition" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Сумма купона (пишите со словом SO'M)</label>
+                    <input type="text" id="input-sum" value="20 000 SO'M" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:outline-none transition font-bold text-pink-600 uppercase" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Telegram Бот (через @)</label>
+                    <input type="text" id="input-bot" value="@NeuroTechUzBot" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:outline-none transition" />
+                </div>
+
+                <button id="btn-generate" onclick="startBulkGeneration()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-pink-200 transition-all flex justify-center items-center gap-2 mt-6 active:scale-95 text-lg">
+                    🚀 Создать карточки + список кодов (ZIP)
+                </button>
+
+                <div id="status-container" class="hidden mt-6 bg-pink-50 p-4 rounded-xl text-center border border-pink-100">
+                    <div class="flex justify-center mb-2.5">
+                        <div class="spinner-loader"></div>
+                    </div>
                     <p id="status-text" class="text-pink-700 font-semibold text-sm">Генерация начата...</p>
-                    <div class="w-full bg-pink-100 h-2 rounded-full mt-2">
-                        <div id="progress-bar" class="bg-pink-500 h-2 rounded-full transition-all w-0"></div>
+                    <div class="w-full bg-pink-100 rounded-full h-2.5 mt-2.5">
+                        <div id="progress-bar" class="bg-pink-500 h-2.5 rounded-full transition-all" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -73,13 +121,145 @@
     </div>
 
     <div style="position: absolute; left: -9999px; top: 0;">
-        <div id="export-template-uz" class="export-template" style="width: 1080px; height: 1440px; background: #fff; padding: 50px; position: relative; font-family: 'Montserrat';">
-            <div class="text-center">
-                <h1 style="font-size: 80px; font-weight: 900; color: #1f2937;">TABRIKLAYMIZ!<br>SIZ</h1>
-                <div style="background: #ec4899; color: white; padding: 30px; border-radius: 50px; font-size: 90px; font-weight: 900; margin: 40px auto; display: inline-block;" id="render-sum-uz">20 000 SO'M</div>
-                <h1 style="font-size: 80px; font-weight: 900; color: #1f2937;">YUTDINGIZ! 🎉</h1>
+        
+        <div id="export-template-uz" class="export-template">
+            <div class="export-decor-1"></div>
+            <div class="export-decor-2"></div>
+
+            <div class="content-z" style="text-align: center; margin-top: 15px; margin-bottom: 25px">
+                <h1 style="font-size: 60px; font-weight: 900; color: #1f2937; line-height: 1.1; margin-bottom: 25px; text-transform: uppercase;">
+                    TABRIKLAYMIZ!<br />SIZ
+                </h1>
+
+                <div style="display: flex; justify-content: center; margin-bottom: 25px">
+                    <div style="background-color: #ec4899; color: white; border-radius: 40px; box-shadow: 0 15px 30px rgba(236, 72, 153, 0.3); min-width: 500px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                        <div id="render-sum-uz" style="font-size: 70px; font-weight: 900; white-space: nowrap;">
+                            20 000 SO'M
+                        </div>
+                    </div>
+                </div>
+
+                <h1 style="font-size: 60px; font-weight: 900; color: #1f2937; line-height: 1.1; text-transform: uppercase;">
+                    YUTDINGIZ! 🎉
+                </h1>
+            </div>
+
+            <div class="content-z mb-4">
+                <div class="step-row">
+                    <div class="step-num">1</div>
+                    <div class="step-text">
+                        <strong>Uzum Market</strong> ilovasiga kiring: "Profil" ➡️ "Mening sharhlarim" ➡️ <strong>"Baholanishi kutilmoqda"</strong> bo'limini tanlang.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">2</div>
+                    <div class="step-text">
+                        Bizning mahsulotimizga <strong>5 yulduz (⭐)</strong> va <strong>rasmli sharh</strong> qoldiring <br /><span style="font-size: 19px; color: #6b7280">(Iltimos, ushbu kartochkani rasmga olmang!)</span>.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">3</div>
+                    <div class="step-text">
+                        "Qoldirilgan fikrlar" bo'limiga o'ting va yozgan sharhingizni <strong>skrinshot qiling</strong>.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">4</div>
+                    <div class="step-text">
+                        Telegram botimizga kiring, <strong>/start</strong> bosib, pastdagi <strong>MAXFIY KODNI</strong> yuboring.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">5</div>
+                    <div class="step-text">
+                        Botga sharh <strong>skrinshoti</strong> va <strong>buyurtma raqamini</strong> yuboring. Pul sizniki! 💸
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-z" style="display: flex; gap: 20px; align-items: stretch">
+                <div style="flex: 1; border: 6px dashed #ffb6c1; background-color: rgba(255, 255, 255, 0.9); border-radius: 30px; padding: 15px; display: flex; flex-direction: column; justify-content: center; text-align: center;">
+                    <p style="font-size: 18px; color: #6b7280; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">Sizning maxfiy kodingiz:</p>
+                    <div id="render-code-uz" style="font-size: 50px; font-weight: 900; color: #db2777; font-family: monospace; letter-spacing: 2px;">
+                        </div>
+                </div>
+                <div style="background-color: white; border-radius: 30px; padding: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; width: 230px;">
+                    <p style="font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 10px; text-transform: uppercase;">Skanerlang</p>
+                    <canvas id="qr-canvas-uz" width="130" height="130"></canvas>
+                    <p id="render-bot-uz" style="font-size: 18px; font-weight: 800; color: #0ea5e9; margin-top: 10px; word-break: break-all; text-align: center;">@Bot</p>
+                </div>
             </div>
         </div>
+
+        <div id="export-template-ru" class="export-template">
+            <div class="export-decor-1"></div>
+            <div class="export-decor-2"></div>
+
+            <div class="content-z" style="text-align: center; margin-top: 15px; margin-bottom: 25px">
+                <h1 style="font-size: 60px; font-weight: 900; color: #1f2937; line-height: 1.1; margin-bottom: 25px; text-transform: uppercase;">
+                    ПОЗДРАВЛЯЕМ!<br />ВЫ ВЫИГРАЛИ
+                </h1>
+
+                <div style="display: flex; justify-content: center; margin-bottom: 25px">
+                    <div style="background-color: #ec4899; color: white; border-radius: 40px; box-shadow: 0 15px 30px rgba(236, 72, 153, 0.3); padding: 15px 50px; display: inline-flex; align-items: center; justify-content: center;">
+                        <span id="render-sum-ru" style="font-size: 70px; font-weight: 900; letter-spacing: 2px; white-space: nowrap;">
+                            20 000 СУМ
+                        </span>
+                    </div>
+                </div>
+
+                <h1 style="font-size: 60px; font-weight: 900; color: #1f2937; line-height: 1.1; text-transform: uppercase;">
+                    КУПОН! 🎉
+                </h1>
+            </div>
+
+            <div class="content-z mb-4">
+                <div class="step-row">
+                    <div class="step-num">1a</div>
+                    <div class="step-text">
+                        Зайдите в приложение <strong>Uzum Market</strong>: "Профиль" ➡️ "Мои отзывы" ➡️ <strong>"К оценке"</strong>.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">2a</div>
+                    <div class="step-text">
+                        Оставьте <strong>отзыв с фото</strong> и поставьте <strong>5 звезд (⭐)</strong> нашему товару <br /><span style="font-size: 19px; color: #6b7280">(Пожалуйста, не фотографируйте эту карточку!)</span>.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">3a</div>
+                    <div class="step-text">
+                        Перейдите в раздел "Уже оценили" и сделайте <strong>скриншот</strong> вашего отзыва.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">4a</div>
+                    <div class="step-text">
+                        Перейдите в нашего Telegram-бота, нажмите <strong>/start</strong> и отправьте <strong>СЕКРЕТНЫЙ КЛЮЧ</strong>.
+                    </div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">5a</div>
+                    <div class="step-text">
+                        Отправьте боту <strong>скриншот</strong> отзыва и <strong>номер заказа</strong>. Деньги ваши! 💸
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-z" style="display: flex; gap: 20px; align-items: stretch">
+                <div style="flex: 1; border: 6px dashed #ffb6c1; background-color: rgba(255, 255, 255, 0.9); border-radius: 30px; padding: 15px; display: flex; flex-direction: column; justify-content: center; text-align: center;">
+                    <p style="font-size: 18px; color: #6b7280; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">Ваш секретный ключ:</p>
+                    <div id="render-code-ru" style="font-size: 50px; font-weight: 900; color: #db2777; font-family: monospace; letter-spacing: 2px;">
+                        </div>
+                </div>
+                <div style="background-color: white; border-radius: 30px; padding: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; width: 230px;">
+                    <p style="font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 10px; text-transform: uppercase;">Сканируй</p>
+                    <canvas id="qr-canvas-ru" width="130" height="130"></canvas>
+                    <p id="render-bot-ru" style="font-size: 18px; font-weight: 800; color: #0ea5e9; margin-top: 10px; word-break: break-all; text-align: center;">@Bot</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>

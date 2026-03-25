@@ -1,30 +1,154 @@
-/* Общие стили */
+/* ========================================================= */
+/* СТИЛИ ДЛЯ АНАЛИЗАТОРА И КАЛЬКУЛЯТОРА                      */
+/* ========================================================= */
+.analyzer-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.analyzer-container h2 { text-align: center; color: #7000ff; margin-top: 0; margin-bottom: 20px; }
+.calc-title { text-align: center; color: #333; margin-bottom: 15px; }
+
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
+
+.form-group input {
+    width: 100%; 
+    padding: 12px;
+    border: 1px solid #ddd; 
+    border-radius: 8px;
+    box-sizing: border-box; 
+    font-size: 16px;
+}
+
+.form-group button {
+    width: 100%; 
+    padding: 12px; 
+    margin-top: 10px;
+    background-color: #7000ff; 
+    color: white;
+    border: none; 
+    border-radius: 8px;
+    font-size: 16px; 
+    cursor: pointer; 
+    transition: background 0.3s;
+}
+.form-group button:hover { background-color: #5500cc; }
+
+.info-box, .calc-box {
+    margin-top: 20px; 
+    padding: 15px;
+    background: #f9f9f9; 
+    border-radius: 8px;
+}
+.info-box { border-left: 4px solid #7000ff; display: none; }
+.calc-box { border-left: 4px solid #28a745; text-align: center; }
+
+/* Текстовый лоадер для Анализатора */
+.loader-text { text-align: center; display: none; margin-top: 15px; color: #666; font-family: sans-serif; }
+
+.result-text { font-size: 24px; font-weight: bold; margin: 5px 0; }
+.text-blue { color: #007bff; }
+.text-green { color: #28a745; }
+
+.divider { margin: 25px 0; border: 0; border-top: 1px solid #eee; }
+.margin-top-15 { margin-top: 15px; }
+
+
+/* ========================================================= */
+/* СТИЛИ ДЛЯ ГЕНЕРАТОРА КАРТОЧЕК (ШАБЛОН 1080x1440)          */
+/* ========================================================= */
+
+.export-template {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 1080px;
+    height: 1440px;
+    background: linear-gradient(145deg, #ffffff 0%, #fff0f5 50%, #ffe4e1 100%);
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 50px 50px;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: white;
+    font-family: "Montserrat", sans-serif; /* Важно для генерации */
+}
+
+.export-decor-1 {
+    position: absolute;
+    top: -150px; left: -150px;
+    width: 500px; height: 500px;
+    background-color: rgba(255, 182, 193, 0.25);
+    border-radius: 50%;
+    z-index: 0;
+}
+.export-decor-2 {
+    position: absolute;
+    bottom: -200px; right: -150px;
+    width: 600px; height: 600px;
+    background-color: rgba(255, 105, 180, 0.15);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.content-z {
+    z-index: 10;
+    position: relative;
+    width: 100%;
+}
+
+.step-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 12px 18px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+.step-num {
+    font-weight: 900;
+    color: #ec4899;
+    font-size: 32px;
+    min-width: 65px;
+    line-height: 1;
+    padding-top: 4px;
+}
+.step-text {
+    font-size: 21px;
+    color: #374151;
+    line-height: 1.35;
+    text-align: left;
+    font-weight: 500;
+}
+.step-text strong {
+    color: #111827;
+    font-weight: 800;
+}
+
+/* Круговой лоадер для Генератора */
+.spinner-loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ec4899;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Класс для скрытия вкладок */
 .tab-content.hidden {
     display: none !important;
 }
-
-/* Анимация загрузки для Анализатора */
-#loader { color: #7000ff; font-weight: bold; }
-
-/* Стили шаблона карточки (1080x1440) */
-.export-template {
-    width: 1080px; height: 1440px;
-    background: white; position: relative;
-    padding: 60px; display: flex; flex-direction: column;
-    justify-content: space-between; overflow: hidden;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.export-decor-1 { position: absolute; top: -150px; left: -150px; width: 500px; height: 500px; background: rgba(236, 72, 153, 0.1); border-radius: 50%; }
-.export-decor-2 { position: absolute; bottom: -200px; right: -150px; width: 600px; height: 600px; background: rgba(236, 72, 153, 0.05); border-radius: 50%; }
-
-.step-row { display: flex; align-items: start; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 20px; margin-bottom: 10px; }
-.step-num { color: #ec4899; font-size: 32px; font-weight: 900; min-width: 60px; }
-.step-text { font-size: 21px; color: #374151; font-weight: 500; }
-
-.loader-spinner {
-    border: 4px solid #f3f3f3; border-top: 4px solid #ec4899;
-    border-radius: 50%; width: 24px; height: 24px;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
