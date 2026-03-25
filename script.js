@@ -1,12 +1,8 @@
-// 1. Tablarni almashtirish funksiyasi
+// 1. Tablarni almashtirish
 function switchTab(tab) {
-    // Barcha bo'limlarni yashirish
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    
-    // Tanlangan bo'limni ko'rsatish
     document.getElementById(`section-${tab}`).classList.remove('hidden');
     
-    // Tugmalar dizaynini yangilash
     const btnAn = document.getElementById('tab-btn-analyzer');
     const btnGen = document.getElementById('tab-btn-generator');
     
@@ -19,22 +15,47 @@ function switchTab(tab) {
     }
 }
 
-// 2. Analizator va Kalkulyator logikasi
-const API_BASE_URL = "https://data-bekend.onrender.com"; 
-
-async function autoWakeServer() {
-    // Serverni uyg'otish kodi
-}
-
+// 2. Kalkulyator mantiqi
 function liveCalculate() {
-    // Hisoblash kodi
+    const a = parseFloat(document.getElementById('valA').value) || 0;
+    const b = parseFloat(document.getElementById('valB').value) || 0;
+    const c = parseFloat(document.getElementById('valC').value) || 0;
+
+    let result = (a * (b / 100) + 5000 + b) / (1 - c / 100);
+    let benefit = (a * (b / 100) + 5000);
+    
+    document.getElementById('output').innerText = Math.round(result).toLocaleString('ru-RU') + " сум";
+    document.getElementById('foyda').innerText = Math.round(benefit).toLocaleString('ru-RU') + " сум";
 }
 
-// 3. Generator logikasi
+// 3. Generator mantiqi
 async function startBulkGeneration() {
-    // Kartochka yaratish kodi
+    const count = parseInt(document.getElementById('input-count').value) || 1;
+    const prefix = document.getElementById('input-prefix').value.trim();
+    const statusText = document.getElementById('status-text');
+    const statusContainer = document.getElementById('status-container');
+    const progressBar = document.getElementById('progress-bar');
+    
+    statusContainer.classList.remove('hidden');
+    const zip = new JSZip();
+    const template = document.getElementById('export-template-uz');
+    
+    for (let i = 1; i <= count; i++) {
+        const code = prefix + "-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+        statusText.innerText = `Tayyorlanmoqda: ${i}/${count}`;
+        progressBar.style.width = `${(i / count) * 100}%`;
+        
+        const canvas = await html2canvas(template, { scale: 1 });
+        const imgData = canvas.toDataURL("image/jpeg", 0.9).split(',')[1];
+        zip.file(`${i}_card_${code}.jpg`, imgData, { base64: true });
+    }
+    
+    const content = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = "NeuroTech_Cards.zip";
+    link.click();
+    statusText.innerText = "Tayyor! ✅";
 }
 
-// Hodisalarni tinglash
 document.querySelectorAll('input').forEach(inp => inp.addEventListener('input', liveCalculate));
-autoWakeServer();

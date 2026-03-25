@@ -22,17 +22,12 @@
         <div id="section-analyzer" class="tab-content">
             <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100">
                 <h2 class="text-2xl font-bold text-center text-purple-700 mb-4">Uzum Анализатор</h2>
-                <div id="serverStatus" class="text-center mb-4 text-sm font-bold text-orange-500">🟡 Подключение к серверу...</div>
+                <div id="serverStatus" class="text-center mb-4 text-sm font-bold text-orange-500">🟡 Подключение к серверu...</div>
                 
                 <div class="space-y-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Ссылка на товар Uzum:</label>
-                        <input type="text" id="uzumUrl" placeholder="https://uzum.uz/..." class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-purple-400">
-                    </div>
-                    <button onclick="analyzeProduct()" id="analyzeBtn" class="w-full bg-gray-400 text-white py-3 rounded-xl font-bold transition">Получить данные</button>
+                    <input type="text" id="uzumUrl" placeholder="https://uzum.uz/..." class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-purple-400">
+                    <button onclick="analyzeProduct()" id="analyzeBtn" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold transition">Получить данные</button>
                 </div>
-
-                <div id="loader" class="hidden text-center my-4">⏳ Собираю данные...</div>
 
                 <div id="infoBox" class="hidden p-4 bg-purple-50 rounded-xl border-l-4 border-purple-600 mb-6">
                     <p><strong>Категория:</strong> <span id="resCategory">-</span></p>
@@ -41,7 +36,6 @@
                 </div>
 
                 <hr class="my-6">
-
                 <h3 class="text-xl font-bold text-center mb-4">Калькулятор прибыли</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div><label class="text-xs font-bold text-gray-500 uppercase">Прибыль %</label><input type="number" id="valA" value="20" class="w-full p-2 border rounded-lg"></div>
@@ -50,10 +44,8 @@
                 </div>
 
                 <div class="bg-gray-50 p-6 rounded-2xl text-center border border-gray-100">
-                    <p class="text-gray-500 text-sm">Рекомендованная цена:</p>
                     <p id="output" class="text-3xl font-black text-blue-600">0 сум</p>
-                    <p class="text-gray-500 text-sm mt-4">Чистая прибыль (Foyda):</p>
-                    <p id="foyda" class="text-2xl font-bold text-green-600">0 сум</p>
+                    <p id="foyda" class="text-2xl font-bold text-green-600 mt-2">0 сум</p>
                 </div>
             </div>
         </div>
@@ -62,28 +54,15 @@
             <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100">
                 <h2 class="text-2xl font-bold text-center text-pink-600 mb-6">Uzum Cashback Generator</h2>
                 <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Кол-во кодов</label>
-                        <input type="number" id="input-count" value="10" class="w-full p-3 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Префикс</label>
-                        <input type="text" id="input-prefix" value="NT" class="w-full p-3 border rounded-xl uppercase">
-                    </div>
+                    <input type="number" id="input-count" value="10" class="p-3 border rounded-xl" placeholder="Soni">
+                    <input type="text" id="input-prefix" value="NT" class="p-3 border rounded-xl uppercase" placeholder="Prefix">
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-bold text-gray-600 mb-1">Сумма (UZB)</label>
-                    <input type="text" id="input-sum" value="20 000 SO'M" class="w-full p-3 border rounded-xl font-bold text-pink-600">
-                </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-600 mb-1">Telegram Бот (@)</label>
-                    <input type="text" id="input-bot" value="@NeuroTechUzBot" class="w-full p-3 border rounded-xl">
-                </div>
+                <input type="text" id="input-sum" value="20 000 SO'M" class="w-full p-3 border rounded-xl mb-4 font-bold text-pink-600 text-center">
+                <input type="text" id="input-bot" value="@NeuroTechUzBot" class="w-full p-3 border rounded-xl mb-6 text-center">
                 
-                <button onclick="startBulkGeneration()" id="btn-generate" class="w-full bg-pink-500 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-pink-600 transition active:scale-95">🚀 Создать карточки (ZIP)</button>
+                <button onclick="startBulkGeneration()" id="btn-generate" class="w-full bg-pink-500 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-pink-600 transition">🚀 Создать карточки (ZIP)</button>
 
                 <div id="status-container" class="hidden mt-6 bg-pink-50 p-4 rounded-xl text-center">
-                    <div class="loader-spinner mx-auto mb-2"></div>
                     <p id="status-text" class="text-pink-700 font-semibold text-sm">Генерация начата...</p>
                     <div class="w-full bg-pink-100 h-2 rounded-full mt-2">
                         <div id="progress-bar" class="bg-pink-500 h-2 rounded-full transition-all w-0"></div>
@@ -94,18 +73,13 @@
     </div>
 
     <div style="position: absolute; left: -9999px; top: 0;">
-        <div id="export-template-uz" class="export-template">
-            <div class="export-decor-1"></div><div class="export-decor-2"></div>
-            <div class="content-z text-center">
-                <h1 class="text-[60px] font-black uppercase text-gray-800 leading-tight">TABRIKLAYMIZ!<br>SIZ</h1>
-                <div class="flex justify-center my-6">
-                    <div class="bg-[#ec4899] text-white px-12 py-6 rounded-[40px] text-[70px] font-black" id="render-sum-uz">20 000 SO'M</div>
-                </div>
-                <h1 class="text-[60px] font-black uppercase text-gray-800">YUTDINGIZ! 🎉</h1>
+        <div id="export-template-uz" class="export-template" style="width: 1080px; height: 1440px; background: #fff; padding: 50px; position: relative; font-family: 'Montserrat';">
+            <div class="text-center">
+                <h1 style="font-size: 80px; font-weight: 900; color: #1f2937;">TABRIKLAYMIZ!<br>SIZ</h1>
+                <div style="background: #ec4899; color: white; padding: 30px; border-radius: 50px; font-size: 90px; font-weight: 900; margin: 40px auto; display: inline-block;" id="render-sum-uz">20 000 SO'M</div>
+                <h1 style="font-size: 80px; font-weight: 900; color: #1f2937;">YUTDINGIZ! 🎉</h1>
             </div>
-            </div>
-        <div id="export-template-ru" class="export-template">
-             </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
